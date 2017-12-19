@@ -45,7 +45,7 @@ public class Prompt {
 			return 0;
 
 		}
-		
+
 	}
 
 	public void runPrompt() throws ParseException {
@@ -54,21 +54,29 @@ public class Prompt {
 		Scanner scanner = new Scanner(System.in);
 		Calendar2 cal = new Calendar2();
 
-		while (true) {
+		boolean isLoop = true;
+		while (isLoop) {
 			System.out.println("명령(1,2,3,h,q)");
 			String cmd = scanner.next();
-			if (cmd.equals("1"))
+			switch (cmd) {
+			case "1":
 				cmdRegister(scanner, cal);
-			else if (cmd.equals("2"))
-				cmdSearch(scanner, cal);
-			else if (cmd.equals("3"))
-				cmdCal(scanner, cal);
-			else if (cmd.equals("3"))
-				printMenu();
-			else if (cmd.equals("q"))
 				break;
-		}
+			case "2":
+				cmdSearch(scanner, cal);
+				break;
+			case "3":
+				cmdCal(scanner, cal);
+				break;
+			case "h":
+				printMenu();
+				break;
+			case "q":
+				isLoop = false;
+				break;
 
+			}
+		}
 		System.out.println("Thank you. bye~");
 		scanner.close();
 	}
@@ -102,16 +110,16 @@ public class Prompt {
 		System.out.println("[일정검색]");
 		System.out.println("날짜를 입력해주세요 (yyyy-MM-dd).");
 		String date = s.next();
-		String plan = "";
-		try {
-			plan = c.searchPlan(date);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.err.println("일정검색 중 오류가 발생 했습니다.");
+		PlanItem plan;
+		plan = c.searchPlan(date);
+		if (plan != null) {
+			System.out.println(plan.detail);
+		} else {
+			System.out.println("일정이 없습니다.");
 		}
-		System.out.println(plan);
-		// TODO Auto-generated method stub
+		
+
+	// TODO Auto-generated method stub
 
 	}
 
@@ -120,14 +128,13 @@ public class Prompt {
 		System.out.println("날짜를 입력해주세요 (yyyy-MM-dd).");
 		String date = s.next();
 		String text = "";
-		System.out.println("일정을 입력해주세요. (문장의 끝에 ;을 입력해주세요.");
-		while (true) {
-			String word = s.next();
+		System.out.println("일정을 입력해주세요. (끝문자 = ;)");
+		String word;
+		while (!(word = s.next()).endsWith(";")) {
 			text += word + " ";
-			if (word.endsWith(";")) {
-				break;
-			}
-		}
+					}
+		word = word.replace(";","");
+		text += word;
 		c.registerPlan(date, text);
 		// TODO Auto-generated method stub
 

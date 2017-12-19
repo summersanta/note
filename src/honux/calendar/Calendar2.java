@@ -1,8 +1,37 @@
 package honux.calendar;
 
+import java.text.ParseException;
+
+import java.util.Date;
+import java.util.HashMap;
+
 public class Calendar2 {
 	private static final int[] MAX_DAYS = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	private static final int[] LEAP_MAX_DAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	private static final int[] LEAP_MAX_DAYS = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+	private HashMap<Date, PlanItem> planMap;
+
+	public Calendar2() {
+		planMap = new HashMap<Date, PlanItem>();
+	}
+
+	// import 단축키는 ctrl + shift + o
+	/**
+	 * 
+	 * @param date
+	 *            ex: "2017-06-20"
+	 * @param plan
+	 * @throws ParseException
+	 */
+	public void registerPlan(String strDate, String plan) {
+		// java date from string 로 구글링 ㄱㄱ
+		PlanItem p = new PlanItem(strDate, plan);
+		planMap.put(p.getDate(), p);
+	}
+	public PlanItem searchPlan(String strDate) {
+		Date date = PlanItem.getDatefromString(strDate);
+		return planMap.get(date);
+	}
 
 	public boolean isLeapYear(int year) {
 		if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
@@ -58,8 +87,8 @@ public class Calendar2 {
 	private int getWeekday(int year, int month, int day) {
 		// 기준 날짜에 요일을 얻어내자. 예를들어 1970년 1월 1일 (컴퓨터 달력 1970년 1월 1일부터 시작함)
 		int syear = 1970;
-	
-		final int STANDARD_WEEKDAY = 3;
+
+		final int STANDARD_WEEKDAY = 4;
 		// 1970/Jan/1st = Thursday
 
 		int count = 0;
@@ -69,26 +98,29 @@ public class Calendar2 {
 			count += delta;
 		}
 
-		//System.out.println(count);
+		// System.out.println(count);
 		for (int i = 1; i < month; i++) {
 			int delta = getMaxDaysOfMonth(year, i);
 			count += delta;
 		}
-		
-		count += day ;
-		
-		int weekday = (count + STANDARD_WEEKDAY) % 7 ;
+
+		count += day - 1;
+
+		int weekday = (count + STANDARD_WEEKDAY) % 7;
 		return weekday;
 	}
 
 	// simple test code here
-	public static void main(String[]args) {
-		Calendar2 c = new Calendar2();
-		System.out.println(c.getWeekday(1970, 1, 1) == 3);
-		System.out.println(c.getWeekday(1971, 1, 1) == 4);
-		System.out.println(c.getWeekday(1972, 1, 1) == 5);
-		System.out.println(c.getWeekday(1973, 1, 1) == 0);
-		System.out.println(c.getWeekday(1974, 1, 1) == 1);
+	public static void main(String[] args) throws ParseException {
+		Calendar2 cal = new Calendar2();
+		System.out.println(cal.getWeekday(1970, 1, 1) == 4);
+		System.out.println(cal.getWeekday(1971, 1, 1) == 5);
+		System.out.println(cal.getWeekday(1972, 1, 1) == 6);
+		System.out.println(cal.getWeekday(1973, 1, 1) == 1);
+		System.out.println(cal.getWeekday(1974, 1, 1) == 2);
+
+		cal.registerPlan("2017-06-23", "Let's eat beef!");
+		System.out.println(cal.searchPlan("2017-06-23").equals("Let's eat beef!"));
+
 	}
 }
-
